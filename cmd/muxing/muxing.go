@@ -25,6 +25,30 @@ func Start(host string, port int) {
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), router); err != nil {
 		log.Fatal(err)
 	}
+	router.HandleFunc("/bad", handleBadRequest).Methods(http.MethodGet)
+	router.HandleFunc("/name/{PARAM}", handleHelloRequest).Methods(http.MethodGet)
+	router.HandleFunc("/data", handleBodyDataRequest).Methods(http.MethodPost)
+	router.HandleFunc("/headers", handleHeaderRequest).Methods(http.MethodPost)
+}
+
+func handleBadRequest(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusInternalServerError)
+}
+
+func handleHelloRequest(w http.ResponseWriter, r *http.Request) {
+	param := mux.Vars(r)["PARAM"]
+	w.Write([]byte(fmt.Sprintf("Hello, %v!", param)))
+}
+
+func handleBodyDataRequest(w http.ResponseWriter, r *http.Request) {
+	data := r.GetBody
+	w.Write([]byte(fmt.Sprintf("I got message:\n%v", data)))
+}
+
+func handleHeaderRequest(w http.ResponseWriter, r *http.Request) {
+	a, _ := strconv.Atoi(r.Header.Get("a"))
+	b, _ := strconv.Atoi(r.Header.Get("b"))
+	w.Header().Add("a+b", strconv.Itoa(a+b))
 }
 
 //main /** starts program, gets HOST:PORT param and calls Start func.
