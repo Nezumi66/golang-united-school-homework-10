@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -44,8 +45,12 @@ func handleHelloRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleBodyDataRequest(w http.ResponseWriter, r *http.Request) {
-	data := r.GetBody
-	_, err := w.Write([]byte(fmt.Sprintf("I got message:\n%v", data)))
+	data, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Println("handleBodyDataRequest error")
+	}
+	str := "I got message:\n" + string(data)
+	_, err = w.Write([]byte(str))
 	if err != nil {
 		log.Println("handleBodyDataRequest error")
 	}
