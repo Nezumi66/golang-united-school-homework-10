@@ -37,12 +37,18 @@ func handleBadRequest(w http.ResponseWriter, r *http.Request) {
 
 func handleHelloRequest(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)["PARAM"]
-	w.Write([]byte(fmt.Sprintf("Hello, %v!", param)))
+	_, err := w.Write([]byte(fmt.Sprintf("Hello, %v!", param)))
+	if err != nil {
+		log.Println("handleHelloRequest error")
+	}
 }
 
 func handleBodyDataRequest(w http.ResponseWriter, r *http.Request) {
 	data := r.GetBody
-	w.Write([]byte(fmt.Sprintf("I got message:\n%v", data)))
+	_, err := w.Write([]byte(fmt.Sprintf("I got message:\n%v", data)))
+	if err != nil {
+		log.Println("handleBodyDataRequest error")
+	}
 }
 
 func handleHeaderRequest(w http.ResponseWriter, r *http.Request) {
